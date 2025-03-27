@@ -4,6 +4,8 @@ import environ
 
 env = environ.Env()
 environ.Env.read_env()
+
+print(env)
 FIREBASE_SERVICE_ACCOUNT = env('FIREBASE_SERVICE_ACCOUNT_PATH')
 FIREBASE_WEB_CONFIG = {
     "apiKey": env("FIREBASE_API_KEY"),
@@ -12,6 +14,7 @@ FIREBASE_WEB_CONFIG = {
     "storageBucket": env("FIREBASE_STORAGE_BUCKET"),
     "messagingSenderId": env("FIREBASE_MESSAGING_SENDER_ID"),
     "appId": env("FIREBASE_APP_ID"),
+    "databaseURL": env("FIREBASE_DATABASE", default="")
 }
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,6 +34,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,7 +48,8 @@ INSTALLED_APPS = [
     'theme',
 
     #our_apps
-    'accounts'
+    'accounts',
+    'auctions'
 ]
 
 MIDDLEWARE = [

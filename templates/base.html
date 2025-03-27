@@ -12,7 +12,9 @@
   <!-- Header -->
   <header class="bg-white shadow p-4">
     <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-xl font-semibold">🧿 Auctify</h1>
+      <h1 class="text-xl font-semibold">
+        <a href="{% url 'dashboard' %}">🧿 Auctify</a>
+      </h1>
       <nav>
         <a href="{% url 'signin' %}" class="text-blue-600 hover:underline mr-4">Sign In</a>
         <a href="{% url 'signup' %}" class="text-blue-600 hover:underline">Sign Up</a>

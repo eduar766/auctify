@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}All Auctions{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-6">Active Auctions</h2>
+<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  {% for auction in auctions %}
+  <a href="{% url 'auction_detail' auction.id %}" class="block border p-4 rounded shadow hover:shadow-lg transition">
+    <h3 class="text-lg font-semibold">{{ auction.title }}</h3>
+    <p class="text-sm text-gray-600">{{ auction.category }}</p>
+    <p class="mt-2 font-bold text-blue-600">${{ auction.start_price }}</p>
+    <p class="text-xs text-gray-500">Ends: {{ auction.end_time }}</p>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}
