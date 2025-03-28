@@ -6,6 +6,10 @@ from django.views.decorators.csrf import csrf_exempt
 from firebase_admin import firestore
 from django.contrib.auth.decorators import login_required
 from accounts.decorators import firebase_login_required  # personalizado
+import tempfile
+from firebase_admin import storage
+from accounts.firebase import get_firebase_bucket
+from uuid import uuid4
 
 from .forms import AuctionForm
 
@@ -19,12 +23,32 @@ def auction_create_view(request):
         if form.is_valid():
             data = form.cleaned_data
             auction_id = firestore.client().collection('auctions').document().id
+
+            # 🔼 Subida de imágenes a Storage
+            uploaded_images = []
+            files = request.FILES.getlist('images')
+            for image in files:
+                temp_file = tempfile.NamedTemporaryFile(delete=False)
+                for chunk in image.chunks():
+                    temp_file.write(chunk)
+                temp_file.flush()
+
+                ext = image.name.split('.')[-1]
+                filename = f"auctions/{auction_id}/{uuid4()}.{ext}"
+
+                blob = storage.bucket().blob(filename)
+                blob.upload_from_filename(temp_file.name)
+
+                blob.make_public()  # 👈 Solo para desarrollo
+                uploaded_images.append(blob.public_url)
+
+            print('peorrrrrrrrr', uploaded_images)
             auction_data = {
                 'id': auction_id,
                 'owner_id': request.firebase_uid,
                 'title': data['title'],
                 'description': data['description'],
-                'images': [],  # Lo veremos en uploads reales
+                'images': uploaded_images,
                 'start_price': float(data['start_price']),
                 'category': data.get('category') or '',
                 'start_time': timezone.now(),
@@ -37,11 +61,13 @@ def auction_create_view(request):
                 'sold': False,
                 'cancelled_by_owner': False,
             }
+
             db.collection('auctions').document(auction_id).set(auction_data)
             messages.success(request, 'Auction created successfully.')
             return redirect('auction_list')
     else:
         form = AuctionForm()
+
     return render(request, 'auctions/create.html', {'form': form})
 
 

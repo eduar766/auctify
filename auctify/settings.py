@@ -6,6 +6,7 @@ env = environ.Env()
 environ.Env.read_env()
 
 print(env)
+FIREBASE_PROJECT_ID = env('FIREBASE_PROJECT_ID')
 FIREBASE_SERVICE_ACCOUNT = env('FIREBASE_SERVICE_ACCOUNT_PATH')
 FIREBASE_WEB_CONFIG = {
     "apiKey": env("FIREBASE_API_KEY"),
@@ -141,3 +142,6 @@ TAILWIND_APP_NAME = 'theme'
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

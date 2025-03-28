@@ -4,7 +4,8 @@
 {% block content %}
 <div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
   <h2 class="text-2xl font-bold mb-6 text-center">Create Auction</h2>
-  <form method="post" class="space-y-4">{% csrf_token %}
+  <form method="post" enctype="multipart/form-data" class="space-y-4">
+  {% csrf_token %}
     {% for field in form %}
     <div>
       <label class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
