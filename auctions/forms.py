@@ -16,3 +16,6 @@ class AuctionForm(forms.Form):
     category = forms.ChoiceField(choices=CATEGORIES, required=False)
     end_time = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
     images = forms.FileField(required=False)
+
+class BidForm(forms.Form):
+    amount = forms.FloatField(label='Your Bid', min_value=0.01)

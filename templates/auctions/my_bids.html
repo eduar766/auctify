@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}My Bids{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">My Bids</h2>
+<ul class="space-y-4">
+  {% for bid in bids %}
+    <li class="border p-4 rounded shadow">
+      <p><strong>Auction:</strong> <a href="{{ bid.url }}" class="text-blue-600">{{ bid.title }}</a></p>
+      <p><strong>Amount:</strong> ${{ bid.amount }}</p>
+      <p><strong>Date:</strong> {{ bid.timestamp }}</p>
+    </li>
+  {% empty %}
+    <p>You haven't placed any bids yet.</p>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Place Bid{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+  <h2 class="text-2xl font-bold mb-6 text-center">Place a Bid on "{{ auction.title }}"</h2>
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+    <div>
+      <label class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+      <p class="text-red-500 text-xs">{{ field.errors.0 }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+    {% if warning %}
+      <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+        ⚠️ {{ warning }}
+      </div>
+    {% endif %}
+    <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700">Place Bid</button>
+  </form>
+</div>
+{% endblock %}
