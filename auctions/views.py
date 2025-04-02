@@ -78,7 +78,7 @@ def auction_create_view(request):
 
 
 def auction_list_view(request):
-    auctions_ref = db.collection('auctions').where('active', '==', True).order_by('end_time')
+    auctions_ref = db.collection('auctions').order_by('end_time')
     auctions = [doc.to_dict() for doc in auctions_ref.stream()]
     return render(request, 'auctions/list.html', {'auctions': auctions})
 
@@ -100,6 +100,9 @@ def auction_detail_view(request, auction_id):
     return render(request, 'auctions/detail.html', {
         'auction': auction,
         'bids': bids,
+        'closed': not auction['active'],
+        'winner': auction.get('winner_id'),
+        'highest_bid': auction.get('highest_bid', 0),
     })
 
 @firebase_login_required
@@ -268,3 +271,34 @@ def my_bids_view(request):
         print("❌ EXCEPCIÓN:", e)
         messages.error(request, 'Error loading bids.')
         return redirect('auction_list')
+    
+@firebase_login_required
+def auction_close_view(request, auction_id):
+    doc_ref = db.collection('auctions').document(auction_id)
+    doc = doc_ref.get()
+    if not doc.exists:
+        raise Http404()
+
+    auction = doc.to_dict()
+    if auction['owner_id'] != request.firebase_uid:
+        return redirect('auction_detail', auction_id=auction_id)
+
+    if request.method == 'POST':
+        action = request.POST.get('close_type')
+        update_fields = {
+            'active': False,
+            'closed_at': timezone.now()
+        }
+
+        if action == 'assign_winner':
+            update_fields['sold'] = True
+        else:
+            update_fields['sold'] = False
+            update_fields['winner_id'] = None
+            update_fields['highest_bid'] = 0.0
+
+        doc_ref.update(update_fields)
+        messages.success(request, 'Auction closed successfully.')
+        return redirect('auction_detail', auction_id=auction_id)
+
+    return render(request, 'auctions/close.html', {'auction': auction})
